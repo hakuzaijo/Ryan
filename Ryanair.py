@@ -73,15 +73,15 @@ class Ryanair(unittest.TestCase):
         driver.find_element_by_css_selector("div.dropdown-handle > core-icon.chevron > div > svg").click()
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         driver.find_element_by_xpath("(//button[@type='button'])[6]").click()
-        time.sleep(1)
+        time.sleep(8)
         driver.find_element_by_xpath("//div[@id='search-container']/div/form/div[3]/button[2]").click()
-        time.sleep(1)
+        time.sleep(8)
 
         #Price
         driver.find_element_by_xpath("html/body/div[2]/main/div[1]/section/div/div[1]/div/div[3]/div/div/div[2]/div[2]/div[1]/div[2]/div[2]/div/span[1]").click()
-        time.sleep(5)
+        time.sleep(8)
         driver.find_element_by_xpath("html/body/div[2]/main/section/div/section[2]/article/div[2]/section/div[2]/button").click()
-        time.sleep(1)
+        time.sleep(8)
 
         #Extras
         driver.find_element_by_xpath("html/body/div[8]/div[2]/div[1]/div/div[1]/h1/div/div/div[1]").click()
