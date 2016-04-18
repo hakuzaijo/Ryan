@@ -6,8 +6,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
 import unittest, time, random
-import names
-
+#import names
+'''
 i = random.randrange(0,99999999, 20)
 i = random.randrange(0,99999999, 20)
 man = names.get_first_name(gender='male')
@@ -15,7 +15,7 @@ woman = names.get_first_name(gender='female')
 child = names.get_first_name()
 surname = names.get_last_name()
 creditCard = names.get_full_name()
-
+'''
 '''
 Created by Marcin Sikorski for Ryanair
 --------------------------------------
@@ -32,39 +32,136 @@ Given I make a booking from “DUB” to “SXF” on 11/03/2016 for 2 adults an
 When I pay for booking with card details “5555 5555 5555 5557”, “10/18” and “265”
 Then I should get payment declined message
 
------------------
-Comments:
-* Pauses added due to the fact website has a lot of javascript and it is heavy to load properly on slower network connection
-* Printscreen of an error message is saved just for safety measure
-* Random names used due to the error message "Duplicated booking in"
-
 '''
 
-
+webpage = "https://www.ryanair.com/ie/en/"
 
 class Ryanair(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
+        self.fromCountry = {'All countries': '1',
+                        'Austria': '2',
+                        'Belgium': '3',
+                        'Bulgaria': '4',
+                        'Croatia': '5',
+                        'Cyprus': '6',
+                        'Czech Republic': '7',
+                        'Denmark': '8',
+                        'Estonia': '9',
+                        'Finland': '10',
+                        'France': '11',
+                        'Germany': '12',
+                        'Greece': '13',
+                        'Hungary': '14',
+                        'Ireland': '15',
+                        'Israel': '16',
+                        'Italy': '17',
+                        'Latvia': '18',
+                        'Lithuania': '19',
+                        'Malta': '20',
+                        'Montenegro': '21',
+                        'Morocco': '22',
+                        'Netherlands': '23',
+                        'Norway': '24',
+                        'Poland': '25',
+                        'Portugal': '26',
+                        'Romania': '27',
+                        'Slovakia': '28',
+                        'Spain': '29',
+                        'Sweden': '30',
+                        'Switzerland': '31',
+                        'United Kingdom': '32'}
+        self.irelandAirport = {'Cork': '3',
+                           'Dublin': '4',
+                           'Kerry': '5',
+                           'Knock': '6',
+                           'Shannon': '7'
+                           }
+        self.toCountryIfIrelandWasChosen = {'Austria':'2',
+                        'Belgium':'3',
+                        'Bulgaria':'4',
+                        'Croatia':'5',
+                        'Czech Republic':'6',
+                        'Denmark':'7',
+                        'Estonia':'8',
+                        'France':'9',
+                        'Germany':'10',
+                        'Greece':'11',
+                        'Hungary':'12',
+                        'Italy':'13',
+                        'Latvia':'14',
+                        'Lithuania':'15',
+                        'Malta':'16',
+                        'Morocco':'17',
+                        'Netherlands':'18',
+                        'Norway':'19',
+                        'Poland':'20',
+                        'Portugal':'21',
+                        'Romania':'22',
+                        'Slovakia':'23',
+                        'Spain':'24',
+                        'Switzerland':'25',
+                        'United Kingdom':'26'
+
+                        }
+        self.germanyAirport = {
+            'Berlin(SXF)':'3',
+            'Bremen':'4',
+            'Cologne':'5',
+            'Frankfurt(HHN)':'6',
+            'Hamburg':'7',
+            'Memmingen':'8'
+        }
+        self.typeOfFlight = {
+            'Return':"1",
+            "One way":"2"
+        }
 
 
     def test_ryanair(self):
         driver = self.driver
-        driver.get("https://www.ryanair.com/ie/en/")
-        driver.maximize_window()
+        self.driver.get(webpage)
+        #driver.maximize_window()
         time.sleep(1)
 
+        self.chooseFrom('Ireland', 'Dublin')
+        self.returnOrOneWay()
+        self.chooseTo('Germany', 'Berlin (SXF)')
 
-        #Dublin
-        driver.find_element_by_xpath("(//input[@type='text'])[2]").clear()
-        driver.find_element_by_xpath("(//input[@type='text'])[2]").send_keys("dublin")
+
+
+    def chooseFrom(self, countryFrom, airportFrom):
+        self.fromField = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[2]/div/div[1]/div[2]/div[2]/div/div[1]/input"
+        self.fromCountryXpath = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[2]/div/div[1]/div[3]/div/div/div[2]/popup-content/core-linked-list/div[1]/div/div["
+        self.fromAirportXpath = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[2]/div/div[1]/div[3]/div/div/div[2]/popup-content/core-linked-list/div[2]/div/div["
+
+        self.driver.find_element_by_xpath(self.fromField).clear()
+        time.sleep(2)
+        self.driver.find_element_by_xpath(self.fromField).click()
         time.sleep(1)
-        #One way
-        driver.find_element_by_xpath("html/body/div[2]/main/article/div[2]/div/div[2]/div/form/div[1]/div[1]/div[2]/label/span[2]").click()
+        self.driver.find_element_by_xpath(self.fromCountryXpath+str(self.fromCountry[countryFrom])+"]").click()
         time.sleep(1)
-        #Berlin
-        driver.find_element_by_xpath("(//input[@type='text'])[4]").click()
-        driver.find_element_by_xpath("(//input[@type='text'])[4]").clear()
-        driver.find_element_by_xpath("(//input[@type='text'])[4]").send_keys("berlin (sxf)")
+        self.driver.find_element_by_xpath(self.fromAirportXpath+str(self.irelandAirport[airportFrom])+"]").click()
+
+
+    def chooseTo(self, countryTo, airportTo):
+        self.toField = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[2]/div/div[2]/div[2]/div[2]/div/div[1]/input"
+        self.toCountryXpath = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[2]/div/div[2]/div[3]/div/div/div[2]/popup-content/core-linked-list/div[1]/div/div["
+        self.toAirportXpath = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[2]/div/div[2]/div[3]/div/div/div[2]/popup-content/core-linked-list/div[2]/div/div["
+
+        self.driver.find_element_by_xpath(self.toField).click()
+        time.sleep(1)
+        self.driver.find_element_by_xpath(self.toCountryXpath + str(self.toCountryIfIrelandWasChosen[countryTo])+"]").click()
+        time.sleep(1)
+        self.driver.find_element_by_xpath(self.toAirportXpath + str(self.germanyAirport[airportTo]) + "]").click()
+
+
+    def returnOrOneWay(self):
+        self.typeOfFlightButton = "html/body/div[2]/main/article/div[2]/div/div[2]/div/div/form/div[1]/div[1]/div["
+        self.driver.find_element_by_xpath(self.typeOfFlightButton + str(self.typeOfFlight['One way']) + "]/input").click()
+        time.sleep(1)
+
+        '''
         #Fly out
         driver.find_element_by_xpath("//div[@id='search-container']/div/form/div[3]/button").click()
         driver.find_element_by_css_selector("div.select-date.placeholder").click()
@@ -152,6 +249,8 @@ class Ryanair(unittest.TestCase):
         driver.get_screenshot_as_file('errorUnauthorized.png')
         print ("Screenshoot saved")
         driver.quit()
+        '''
+
 
     def tearDown(self):
         self.driver.quit()
